@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <Print.h>
+#include <Wire.h>
 
 
 
@@ -112,6 +113,7 @@ private:
 	uint8_t _rows;
 	uint8_t _charsize;
 	uint8_t _backlightval;
+	TwoWire& _Wire;
 };
 
 #endif // FDB_LIQUID_CRYSTAL_I2C_H

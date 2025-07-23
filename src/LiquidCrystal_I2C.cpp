@@ -1,7 +1,6 @@
 #include "LiquidCrystal_I2C.h"
 #include <inttypes.h>
 #include <Arduino.h>
-#include <Wire.h>
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
