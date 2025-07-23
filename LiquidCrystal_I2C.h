@@ -77,12 +77,8 @@ public:
 
 	void scrollDisplayLeft();
 	void scrollDisplayRight();
-	void printLeft();
-	void printRight();
 	void leftToRight();
 	void rightToLeft();
-	void shiftIncrement();
-	void shiftDecrement();
 	void noBacklight();
 	void backlight();
 	bool getBacklight();
