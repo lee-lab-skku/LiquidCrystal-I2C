@@ -14,18 +14,14 @@
 #define LCD_SETDDRAMADDR 0x80
 
 // flags for display entry mode
-#define LCD_ENTRYRIGHT 0x00
 #define LCD_ENTRYLEFT 0x02
 #define LCD_ENTRYSHIFTINCREMENT 0x01
 #define LCD_ENTRYSHIFTDECREMENT 0x00
 
 // flags for display on/off control
 #define LCD_DISPLAYON 0x04
-#define LCD_DISPLAYOFF 0x00
 #define LCD_CURSORON 0x02
-#define LCD_CURSOROFF 0x00
 #define LCD_BLINKON 0x01
-#define LCD_BLINKOFF 0x00
 
 // flags for display/cursor shift
 #define LCD_DISPLAYMOVE 0x08
@@ -34,7 +30,6 @@
 #define LCD_MOVELEFT 0x00
 
 // flags for function set
-#define LCD_8BITMODE 0x10
 #define LCD_4BITMODE 0x00
 #define LCD_2LINE 0x08
 #define LCD_1LINE 0x00
@@ -68,56 +63,33 @@
 // can't assume that its in that state when a sketch starts (and the
 // LiquidCrystal constructor is called).
 
-LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_addr, uint8_t lcd_cols, uint8_t lcd_rows, uint8_t charsize, TwoWire& wire)
+LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_addr, uint8_t lcd_cols, uint8_t lcd_rows, TwoWire& wire)
 	: _Wire(wire), _displayfunction(0), _displaycontrol(0), _displaymode(0), _addr(lcd_addr),
-	  _cols(lcd_cols), _rows(lcd_rows), _charsize(charsize), _backlightval(LCD_BACKLIGHT)
+	  _cols(lcd_cols), _rows(lcd_rows), _charsize(0), _backlightval(LCD_NOBACKLIGHT)
 {}
 
 void LiquidCrystal_I2C::begin() {
-	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
-
 	if (_rows > 1) {
 		_displayfunction |= LCD_2LINE;
 	}
 
-	// for some 1 line displays you can select a 10 pixel high font
-	if ((_charsize != 0) && (_rows == 1)) {
-		_displayfunction |= LCD_5x10DOTS;
-	}
-
-	// SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
-	// according to datasheet, we need at least 40ms after power rises above 2.7V
-	// before sending commands. Arduino can turn on way befer 4.5V so we'll wait 50
 	delay(50);
-
-	// Now we pull both RS and R/W low to begin commands
 	expanderWrite(_backlightval);	// reset expanderand turn backlight off (Bit 8 =1)
 	delay(1000);
 
-	//put the LCD into 4 bit mode
-	// this is according to the hitachi HD44780 datasheet
-	// figure 24, pg 46
-
-	// we start in 8bit mode, try to set 4 bit mode
 	write4bits(0x03 << 4);
-	delayMicroseconds(4500); // wait min 4.1ms
-
-	// second try
+	delayMicroseconds(4500);
 	write4bits(0x03 << 4);
-	delayMicroseconds(4500); // wait min 4.1ms
-
-	// third go!
+	delayMicroseconds(4500);
 	write4bits(0x03 << 4);
 	delayMicroseconds(150);
-
-	// finally, set to 4-bit interface
 	write4bits(0x02 << 4);
 
 	// set # lines, font size, etc.
 	command(LCD_FUNCTIONSET | _displayfunction);
 
 	// turn the display on with no cursor or blinking default
-	_displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
+	_displaycontrol = LCD_DISPLAYON;
 	display();
 
 	// clear it off
