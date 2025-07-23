@@ -1,0 +1,13 @@
+{
+  "name": "LiquidCrystal-I2C",
+  "version": "1.0.0",
+  "description": "A fixed library for safe control of I2C LCD displays (ft. DFRobot)",
+  "keywords": [
+    "LCD",
+    "I2C"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lee-lab-skku/LiquidCrystal-I2C.git"
+  }
+}
