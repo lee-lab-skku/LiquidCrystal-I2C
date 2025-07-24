@@ -63,8 +63,6 @@ namespace LCD {
 
 } // namespace LCD
 
-#endif // LCDCONSTANTS_HPP
-
 
 /**
  * This is the driver for the Liquid Crystal LCD displays that use the I2C bus.
