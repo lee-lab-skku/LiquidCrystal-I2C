@@ -63,111 +63,177 @@ namespace LCD {
 } // namespace LCD
 
 
-/**
- * This is the driver for the Liquid Crystal LCD displays that use the I2C bus.
+/*!
+ * @class LiquidCrystal_I2C
+ * @brief Library class for I2C interface HD44780 LCD displays shielded with DFRobot I2C interface.
  *
- * After creating an instance of this class, first call begin() before anything else.
- * The backlight is on by default, since that is the most likely operating mode in
- * most cases.
+ * This class provides functions to control character LCDs via the I2C interface, 
+ * including printing text, cursor control, backlight management, custom character creation, and more.
  */
-class LiquidCrystal_I2C : public Print {
-public:
-	/**
-	 * Constructor
-	 *
-	 * @param lcd_addr	I2C slave address of the LCD display. Most likely printed on the
-	 *					LCD circuit board, or look in the supplied LCD documentation.
-	 * @param lcd_cols	Number of columns your LCD display has.
-	 * @param lcd_rows	Number of rows your LCD display has.
-	 * @param charsize	The size in dots that the display has, use LCD::Function::Font5x10 or LCD::Function::Font5x8.
-	 */
-	LiquidCrystal_I2C(uint8_t lcd_addr, uint8_t lcd_cols, uint8_t lcd_rows, uint8_t charsize = LCD::Function::Font5x8, TwoWire& wire = Wire);
+class LiquidCrystal_I2C: public Print {
+	public:
+		/**
+		 * @brief Constructor for LiquidCrystal_I2C.
+		 *
+		 * @param lcd_addr   I2C slave address of the LCD display (usually printed on the PCB or specified in documentation).
+		 * @param lcd_cols   Number of columns (characters per line) of the LCD display.
+		 * @param lcd_rows   Number of rows (lines) of the LCD display.
+		 * @param charsize   Character dot size; use LCD::Function::Font5x10 or LCD::Function::Font5x8.
+		 * @param wire       (Optional) Reference to the I2C bus to use (default: Wire).
+		 */
+		LiquidCrystal_I2C(uint8_t lcd_addr, uint8_t lcd_cols, uint8_t lcd_rows, uint8_t charsize = LCD::Function::Font5x8, TwoWire& wire = Wire);
 
-	/**
-	 * Set the LCD display in the correct begin state, must be called before anything else is done.
-	 */
-	void begin();
+		/**
+		 * @brief Initializes the LCD display and prepares it for use.
+		 * 
+		 * This function must be called before using other LCD functions such as print(), write(), or clear().
+		 */
+		void begin();
 
-	 /**
-	  * Remove all the characters currently shown. Next print/write operation will start
-	  * from the first position on LCD display.
-	  */
-	void clear();
+		/**
+		 * @brief Clears all characters currently shown on the LCD.
+		 * 
+		 * The display will be empty, and the cursor will return to the (0,0) position.
+		 */
+		void clear();
 
-	/**
-	 * Next print/write operation will will start from the first position on the LCD display.
-	 */
-	void home();
+		/**
+		 * @brief Moves the cursor to the home position (top-left corner).
+		 * 
+		 * The display content is unchanged, but the next print/write will start from (0,0).
+		 */
+		void home();
 
-	 /**
-	  * Do not show any characters on the LCD display. Backlight state will remain unchanged.
-	  * Also all characters written on the display will return, when the display in enabled again.
-	  */
-	void noDisplay();
+		/**
+		 * @brief Turns the display off (hides all characters).
+		 * 
+		 * The backlight state is unaffected. Characters are preserved and will reappear when display() is called.
+		 */
+		void noDisplay();
 
-	/**
-	 * Show the characters on the LCD display, this is the normal behaviour. This method should
-	 * only be used after noDisplay() has been used.
-	 */
-	void display();
+		/**
+		 * @brief Turns the display on (shows all characters).
+		 * 
+		 * Use this after noDisplay() to show the characters again.
+		 */
+		void display();
 
-	/**
-	 * Do not blink the cursor indicator.
-	 */
-	void noBlink();
+		/**
+		 * @brief Disables blinking of the cursor indicator.
+		 */
+		void noBlink();
 
-	/**
-	 * Start blinking the cursor indicator.
-	 */
-	void blink();
+		/**
+		 * @brief Enables blinking of the cursor indicator.
+		 */
+		void blink();
 
-	/**
-	 * Do not show a cursor indicator.
-	 */
-	void noCursor();
+		/**
+		 * @brief Hides the cursor indicator.
+		 */
+		void noCursor();
 
-	/**
- 	 * Show a cursor indicator, cursor can blink on not blink. Use the
-	 * methods blink() and noBlink() for changing cursor blink.
-	 */
-	void cursor();
+		/**
+		 * @brief Shows the cursor indicator.
+		 *
+		 * Cursor blink can be controlled with blink() and noBlink().
+		 */
+		void cursor();
 
-	void scrollDisplayLeft();
-	void scrollDisplayRight();
-	void leftToRight();
-	void rightToLeft();
-	void noBacklight();
-	void backlight();
-	bool getBacklight();
-	void autoscroll();
-	void noAutoscroll();
-	void createChar(uint8_t, uint8_t[]);
-	void setCursor(uint8_t, uint8_t);
-	virtual size_t write(uint8_t);
-	void command(uint8_t);
+		/**
+		 * @brief Scrolls the entire display content one position to the left.
+		 */
+		void scrollDisplayLeft();
 
-	inline void blink_on() { blink(); }
-	inline void blink_off() { noBlink(); }
-	inline void cursor_on() { cursor(); }
-	inline void cursor_off() { noCursor(); }
+		/**
+		 * @brief Scrolls the entire display content one position to the right.
+		 */
+		void scrollDisplayRight();
 
-// Compatibility API function aliases
-	void setBacklight(uint8_t new_val);				// alias for backlight() and nobacklight()
-	void load_custom_character(uint8_t char_num, uint8_t *rows);	// alias for createChar()
-	void printstr(const char[]);
+		/**
+		 * @brief Sets the text direction to left-to-right.
+		 */
+		void leftToRight();
 
-private:
-	void send(uint8_t, uint8_t);
-	void write4bits(uint8_t);
-	void expanderWrite(uint8_t);
-	void pulseEnable(uint8_t);
-	uint8_t _addr;
-	uint8_t _displayfunction;
-	uint8_t _displaycontrol;
-	uint8_t _displaymode;
-	uint8_t _cols;
-	uint8_t _rows;
-	uint8_t _charsize;
-	uint8_t _backlightval;
-	TwoWire& _Wire;
+		/**
+		 * @brief Sets the text direction to right-to-left.
+		 */
+		void rightToLeft();
+
+		/**
+		 * @brief Turns the backlight off.
+		 */
+		void noBacklight();
+
+		/**
+		 * @brief Turns the backlight on.
+		 */
+		void backlight();
+
+		/**
+		 * @brief Returns the current state of the backlight.
+		 * @retval true  Backlight is ON.
+		 * @retval false Backlight is OFF.
+		 */
+		bool getBacklight();
+
+		/**
+		 * @brief Enables automatic scrolling of the display when new text is printed.
+		 * 
+		 * When autoscroll is enabled, text that reaches the edge will cause the display to shift.
+		 */
+		void autoscroll();
+
+		/**
+		 * @brief Disables automatic scrolling of the display.
+		 */
+		void noAutoscroll();
+
+		/**
+		 * @brief Creates a custom character (glyph) in one of the 8 supported locations.
+		 *
+		 * @param location  Memory location (0~7) to store the custom character.
+		 * @param charmap   Pointer to an array of 8 bytes defining the 5x8 dot pattern.
+		 */
+		void createChar(uint8_t, uint8_t[]);
+
+		/**
+		 * @brief Sets the cursor to the specified position.
+		 * @param col  Column position (0-based).
+		 * @param row  Row position (0-based).
+		 */
+		void setCursor(uint8_t, uint8_t);
+
+		/**
+		 * @brief Writes a single character (byte) to the display.
+		 *
+		 * @param value  ASCII code of the character to write.
+		 * @return The number of bytes written (typically 1).
+		 *
+		 * @note Overrides the write() method from Arduino's Print class.
+		 */
+		virtual size_t write(uint8_t);
+
+		/**
+		 * @brief Sends a raw command to the LCD controller.
+		 * @param value  Command byte to send.
+		 *
+		 * @note This method is mid-level and usually not needed in user code.
+		 */
+		void command(uint8_t);
+
+	private:
+		void send(uint8_t, uint8_t);
+		void write4bits(uint8_t);
+		void expanderWrite(uint8_t);
+		void pulseEnable(uint8_t);
+		uint8_t _addr;
+		uint8_t _displayfunction;
+		uint8_t _displaycontrol;
+		uint8_t _displaymode;
+		uint8_t _cols;
+		uint8_t _rows;
+		uint8_t _charsize;
+		uint8_t _backlightval;
+		TwoWire& _Wire;
 };

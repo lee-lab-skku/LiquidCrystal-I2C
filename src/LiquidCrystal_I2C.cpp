@@ -199,21 +199,3 @@ void LiquidCrystal_I2C::pulseEnable(uint8_t _data){
 	expanderWrite(_data & ~LCD::Pin::En);	// En low
 	delayMicroseconds(50);		// commands need > 37us to settle
 }
-
-void LiquidCrystal_I2C::load_custom_character(uint8_t char_num, uint8_t *rows){
-	createChar(char_num, rows);
-}
-
-void LiquidCrystal_I2C::setBacklight(uint8_t new_val){
-	if (new_val) {
-		backlight();		// turn backlight on
-	} else {
-		noBacklight();		// turn backlight off
-	}
-}
-
-void LiquidCrystal_I2C::printstr(const char c[]){
-	//This function is not identical to the function used for "real" I2C displays
-	//it's here so the user sketch doesn't have to be changed
-	print(c);
-}
