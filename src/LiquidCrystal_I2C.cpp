@@ -14,6 +14,11 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_addr, uint8_t lcd_cols, uint8_t
 	_Wire(wire)
 {}
 
+void LiquidCrystal_I2C::init() {
+	_Wire.begin();
+	begin();
+}
+
 void LiquidCrystal_I2C::begin() {
 	if (_rows > 1) {
 		_displayfunction |= LCD::Function::Lines2; // 2-line display

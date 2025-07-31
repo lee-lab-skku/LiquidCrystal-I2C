@@ -84,6 +84,20 @@ class LiquidCrystal_I2C: public Print {
 		LiquidCrystal_I2C(uint8_t lcd_addr, uint8_t lcd_cols, uint8_t lcd_rows, uint8_t charsize = LCD::Function::Font5x8, TwoWire& wire = Wire);
 
 		/**
+		 * @brief Destructor (does nothing).
+		 */
+		~LiquidCrystal_I2C() = default;
+
+		/**
+		 * @brief Compatibility function for legacy Arduino source codes.
+		 * @warning This function is deprecated and should not be used in new code.
+		 * @see begin()
+		 * @deprecated This function calls begin() on the global Wire object, which should be avoided.
+		 * 				Instead, do it explicitly in your setup() function, then call begin() on this instance.
+		 */
+		void init();
+
+		/**
 		 * @brief Initializes the LCD display and prepares it for use.
 		 * 
 		 * This function must be called before using other LCD functions such as print(), write(), or clear().
