@@ -236,11 +236,13 @@ class LiquidCrystal_I2C: public Print {
 		 */
 		void command(uint8_t);
 
+	protected:
+		virtual void send(uint8_t, uint8_t);
+		virtual void write4bits(uint8_t);
+		virtual void expanderWrite(uint8_t);
+		virtual void pulseEnable(uint8_t);
+	
 	private:
-		void send(uint8_t, uint8_t);
-		void write4bits(uint8_t);
-		void expanderWrite(uint8_t);
-		void pulseEnable(uint8_t);
 		uint8_t _addr;
 		uint8_t _displayfunction;
 		uint8_t _displaycontrol;
